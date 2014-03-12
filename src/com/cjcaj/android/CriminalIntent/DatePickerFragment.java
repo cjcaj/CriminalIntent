@@ -1,46 +1,44 @@
 package com.cjcaj.android.CriminalIntent;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.Fragment;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.DatePicker;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-/**
- * Created by carloca on 3/10/14.
- */
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.view.View;
+import android.widget.DatePicker;
+import android.widget.DatePicker.OnDateChangedListener;
+
 public class DatePickerFragment extends DialogFragment {
-    public static final String EXTRA_DATE =
-            "com.cjcaj.android.CriminalIntent.date";
-    private Date mDate;
+    public static final String EXTRA_DATE = "criminalintent.DATE";
+
+    Date mDate;
+
     public static DatePickerFragment newInstance(Date date) {
         Bundle args = new Bundle();
         args.putSerializable(EXTRA_DATE, date);
+        
         DatePickerFragment fragment = new DatePickerFragment();
         fragment.setArguments(args);
+
         return fragment;
     }
 
     private void sendResult(int resultCode) {
-        if (getTargetFragment() == null) {
+        if (getTargetFragment() == null) 
             return;
-        }
 
         Intent i = new Intent();
         i.putExtra(EXTRA_DATE, mDate);
 
-        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, i);
+        getTargetFragment()
+            .onActivityResult(getTargetRequestCode(), resultCode, i);
     }
 
     @Override
@@ -53,29 +51,27 @@ public class DatePickerFragment extends DialogFragment {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        View v = getActivity().getLayoutInflater().inflate(R.layout.dialog_date, null);
+        View v = getActivity().getLayoutInflater()
+            .inflate(R.layout.dialog_date, null);
 
-        DatePicker datePicker = (DatePicker) v.findViewById(R.id.dialog_date_datePicker);
-        datePicker.init(year, month, day, new DatePicker.OnDateChangedListener() {
-            @Override
-            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                mDate = new GregorianCalendar(year, monthOfYear, dayOfMonth).getTime();
+        DatePicker datePicker = (DatePicker)v.findViewById(R.id.dialog_date_datePicker);
+        datePicker.init(year, month, day, new OnDateChangedListener() {
+            public void onDateChanged(DatePicker view, int year, int month, int day) {
+                mDate = new GregorianCalendar(year, month, day).getTime();
 
+                // update argument to preserve selected value on rotation
                 getArguments().putSerializable(EXTRA_DATE, mDate);
             }
         });
 
         return new AlertDialog.Builder(getActivity())
-                .setView(v)
-                .setTitle(R.string.date_picker_title)
-                .setPositiveButton(
-                        android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                sendResult(Activity.RESULT_OK);
-                            }
-                        })
-                .create();
+            .setView(v)
+            .setTitle(R.string.date_picker_title)
+            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    sendResult(Activity.RESULT_OK);
+                }
+            })
+            .create();
     }
 }
