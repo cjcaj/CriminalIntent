@@ -51,7 +51,7 @@ public class CrimeListFragment extends ListFragment {
         }
         
         ListView listView = (ListView)v.findViewById(android.R.id.list);
-
+        
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             registerForContextMenu(listView);
         } else {
@@ -131,7 +131,7 @@ public class CrimeListFragment extends ListFragment {
             case R.id.menu_item_new_crime:
                 Crime crime = new Crime();
                 CrimeLab.get(getActivity()).addCrime(crime);
-                Intent i = new Intent(getActivity(), CrimePagerActivity.class);
+                Intent i = new Intent(getActivity(), CrimeActivity.class);
                 i.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
                 startActivityForResult(i, 0);
                 return true;
